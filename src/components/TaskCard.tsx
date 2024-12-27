@@ -22,7 +22,7 @@ function TaskCard({task, deleteTask, updateTask}: Props) {
         return (
             <div
                 className='bg-columnBackgroundColor p-2.5 h-[100px] min-h[100px] items-center flex text-left rounded-xl
-                hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative'    
+                hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task'    
             >
                 <textarea
                     className='h-[90%] w-full resize-none border-none rounded bg-transparent text-white focus:outline-none'
@@ -42,8 +42,6 @@ function TaskCard({task, deleteTask, updateTask}: Props) {
         </div>
         )
     }
-
-    console.log(editMode)
 
     return (
         <div
