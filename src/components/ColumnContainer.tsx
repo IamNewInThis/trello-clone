@@ -1,10 +1,11 @@
-import React,{useState} from 'react'
+import React,{useMemo, useState} from 'react'
 import types, { column, task } from '../types'
 import TrashIcon from '../icons/TrashIcon'
 import {CSS} from '@dnd-kit/utilities'
 import { useSortable } from '@dnd-kit/sortable'
 import PlusIcon from '../icons/PlusIcon'
 import TaskCard from './TaskCard'
+import { SortableContext } from '@dnd-kit/sortable'
 
 interface Props{
     column:column
@@ -21,6 +22,9 @@ function ColumnContainer(props: Props) {
     const {column, deleteColumn, updateColumn, createTask, tasks, deleteTask, updateTask} = props
 
     const [editMode, setEditMode] = useState(false)
+    const tasksIds = useMemo(()=>{
+        return tasks.map((task) => task.id)
+    }, [tasks])
 
     const {setNodeRef, attributes, listeners, transition, transform, isDragging} = useSortable({
         id: column.id,
@@ -94,11 +98,16 @@ function ColumnContainer(props: Props) {
             {/* Tasks */}
             <div
                 className='flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto'    
-            >
-                {tasks.map((task) => (
-                    <TaskCard task={task} key={task.id} deleteTask={deleteTask} updateTask={updateTask}/>
-                ))}
+            >   
+                <SortableContext
+                    items={tasksIds}
+                >
+                    {tasks.map((task) => (
+                        <TaskCard task={task} key={task.id} deleteTask={deleteTask} updateTask={updateTask}/>
+                    ))}
+                </SortableContext>
             </div>
+
             <button
                 className='flex gap-2 items-center
                 border-columnBackgroundColor border-2 rounded-md p-4 

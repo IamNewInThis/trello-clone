@@ -1,6 +1,8 @@
 import React,{useState} from 'react'
 import TrashIcon from '../icons/TrashIcon';
 import types, { task } from '../types';
+import { useSortable } from '@dnd-kit/sortable'
+import {CSS} from '@dnd-kit/utilities'
 
 interface Props{
     task: task;
@@ -18,11 +20,29 @@ function TaskCard({task, deleteTask, updateTask}: Props) {
         setMouseIsOver(false)
     }
 
+    const {setNodeRef, attributes, listeners, transition, transform, isDragging} = useSortable({
+            id: task.id,
+            data:{
+                type: "Task",
+                task,
+            },
+            disabled: editMode
+    })
+
+    const style = {
+            transition,
+            transform: CSS.Transform.toString(transform)
+    };
+
     if(editMode){
         return (
             <div
                 className='bg-columnBackgroundColor p-2.5 h-[100px] min-h[100px] items-center flex text-left rounded-xl
                 hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative task'    
+                ref={setNodeRef}
+                style={style}
+                {...attributes}
+                {...listeners}
             >
                 <textarea
                     className='h-[90%] w-full resize-none border-none rounded bg-transparent text-white focus:outline-none'
@@ -43,6 +63,19 @@ function TaskCard({task, deleteTask, updateTask}: Props) {
         )
     }
 
+    if(isDragging){
+        return (
+            <div 
+                ref={setNodeRef} 
+                style={style}
+                className='bg-columnBackgroundColor p-2.5 h-[100px] min-h[100px] items-center flex text-left rounded-xl
+                hover:ring-2 border-2 border-rose-500 cursor-grab relative opacity-50'
+            >
+                
+            </div>
+        )
+    }
+
     return (
         <div
             onClick={toggleEditMode}
@@ -50,8 +83,14 @@ function TaskCard({task, deleteTask, updateTask}: Props) {
             hover:ring-2 hover:ring-inset hover:ring-rose-500 cursor-grab relative'    
             onMouseEnter={() => {setMouseIsOver(true)}}
             onMouseLeave={() => {setMouseIsOver(false)}}
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
         >
-            {task.content}
+            <p className='my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap'>
+                {task.content}
+            </p>
 
             {mouseIsOver &&(
                 <button 
